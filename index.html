@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GZIP to JSON Decompressor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Thư viện Pako để xử lý GZIP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; 
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 p-4 shadow-md flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <h1 class="text-xl font-bold text-white">GZIP to JSON Converter</h1>
+        </div>
+        <div class="text-sm text-gray-400 hidden sm:block">
+            Giải nén Base64 GZIP & Format JSON
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col md:flex-row h-full overflow-hidden">
+        
+        <!-- Input Section -->
+        <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-gray-700 h-1/2 md:h-full">
+            <div class="p-3 bg-gray-800 flex justify-between items-center border-b border-gray-700">
+                <label class="font-semibold text-gray-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Input (Base64 Gzip String)
+                </label>
+                <button id="clearBtn" class="text-xs px-3 py-1 rounded bg-gray-700 hover:bg-gray-600 text-gray-300 transition">
+                    Xóa
+                </button>
+            </div>
+            <textarea id="inputArea" class="flex-1 bg-gray-900 p-4 code-font text-sm outline-none resize-none focus:bg-gray-800 transition text-gray-300" placeholder="Dán chuỗi GZIP Base64 vào đây... Ví dụ: H4sIAAAAAAAAC..."></textarea>
+            
+            <div class="p-4 bg-gray-800 border-t border-gray-700 flex justify-end">
+                <button id="decompressBtn" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded shadow-lg transition transform active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Giải nén & Format
+                </button>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="flex-1 flex flex-col h-1/2 md:h-full bg-gray-900 relative">
+            <div class="p-3 bg-gray-800 flex justify-between items-center border-b border-gray-700">
+                <label class="font-semibold text-green-400 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    Output (JSON)
+                </label>
+                <button id="copyBtn" class="hidden text-xs px-3 py-1 rounded bg-green-600 hover:bg-green-700 text-white transition flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    Sao chép
+                </button>
+            </div>
+            
+            <div id="outputContainer" class="flex-1 overflow-auto p-4 relative">
+                <pre id="outputArea" class="code-font text-sm text-green-300 whitespace-pre-wrap break-words"></pre>
+                
+                <!-- Status/Error Message Overlay -->
+                <div id="statusMessage" class="hidden absolute inset-0 flex items-center justify-center bg-gray-900/90 z-10 p-4">
+                    <div class="text-center">
+                        <div id="statusIcon" class="mb-2 mx-auto"></div>
+                        <p id="statusText" class="text-lg font-medium"></p>
+                        <p id="statusDetail" class="text-sm text-gray-400 mt-1 break-all max-w-md"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg transform translate-y-20 opacity-0 transition duration-300 flex items-center gap-2 border border-gray-600">
+        <span id="toastIcon"></span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        const inputArea = document.getElementById('inputArea');
+        const outputArea = document.getElementById('outputArea');
+        const decompressBtn = document.getElementById('decompressBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const statusText = document.getElementById('statusText');
+        const statusDetail = document.getElementById('statusDetail');
+        const statusIcon = document.getElementById('statusIcon');
+
+        // Hàm xử lý chính
+        function processGzip() {
+            const rawInput = inputArea.value.trim();
+            
+            // Reset UI
+            hideStatus();
+            outputArea.textContent = '';
+            copyBtn.classList.add('hidden');
+
+            if (!rawInput) {
+                showStatus('info', 'Chờ dữ liệu', 'Vui lòng nhập chuỗi Base64 GZIP vào ô bên trái.');
+                return;
+            }
+
+            try {
+                // 1. Decode Base64
+                const binaryString = atob(rawInput);
+                const charData = binaryString.split('').map(x => x.charCodeAt(0));
+                const byteArray = new Uint8Array(charData);
+
+                // 2. Decompress GZIP using Pako
+                // Pako tự động nhận diện header gzip
+                const decompressedData = pako.ungzip(byteArray, { to: 'string' });
+
+                // 3. Parse JSON và Format
+                try {
+                    const jsonObject = JSON.parse(decompressedData);
+                    const formattedJson = JSON.stringify(jsonObject, null, 4); // Indent 4 spaces
+                    
+                    outputArea.textContent = formattedJson;
+                    outputArea.classList.remove('text-red-400', 'text-gray-300');
+                    outputArea.classList.add('text-green-300');
+                    copyBtn.classList.remove('hidden');
+                    showToast('success', 'Giải nén thành công!');
+                } catch (jsonError) {
+                    // Nếu không phải JSON, hiển thị text thuần
+                    outputArea.textContent = decompressedData;
+                    outputArea.classList.remove('text-green-300', 'text-red-400');
+                    outputArea.classList.add('text-gray-300');
+                    copyBtn.classList.remove('hidden');
+                    showToast('warning', 'Đã giải nén (Không phải JSON)');
+                }
+
+            } catch (err) {
+                console.error(err);
+                showStatus('error', 'Lỗi xử lý', parseErrorMessage(err));
+            }
+        }
+
+        function parseErrorMessage(err) {
+            if (err.message && err.message.includes('incorrect header check')) {
+                return 'Chuỗi nhập vào có thể không phải định dạng GZIP hoặc đã bị hỏng.';
+            }
+            if (err.name === 'InvalidCharacterError' || err.message.includes('atob')) {
+                return 'Chuỗi nhập vào không phải là Base64 hợp lệ.';
+            }
+            return err.message || 'Lỗi không xác định.';
+        }
+
+        // --- UI Helper Functions ---
+
+        function showStatus(type, title, detail) {
+            statusMessage.classList.remove('hidden');
+            statusText.textContent = title;
+            statusDetail.textContent = detail;
+            
+            let iconSvg = '';
+            let colorClass = '';
+
+            if (type === 'error') {
+                colorClass = 'text-red-500';
+                iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            } else {
+                colorClass = 'text-blue-500';
+                iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            }
+
+            statusText.className = `text-lg font-bold ${colorClass}`;
+            statusIcon.innerHTML = `<div class="${colorClass}">${iconSvg}</div>`;
+        }
+
+        function hideStatus() {
+            statusMessage.classList.add('hidden');
+        }
+
+        function showToast(type, msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            
+            if (type === 'success') {
+                toastIcon.innerHTML = `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            } else if (type === 'warning') {
+                toastIcon.innerHTML = `<svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // --- Event Listeners ---
+
+        decompressBtn.addEventListener('click', processGzip);
+
+        clearBtn.addEventListener('click', () => {
+            inputArea.value = '';
+            outputArea.textContent = '';
+            copyBtn.classList.add('hidden');
+            inputArea.focus();
+            showStatus('info', 'Sẵn sàng', 'Vui lòng nhập chuỗi Base64 GZIP vào ô bên trái.');
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const text = outputArea.textContent;
+            if (!text) return;
+            
+            // Fallback copy method
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('success', 'Đã sao chép vào Clipboard');
+            } catch (err) {
+                showToast('warning', 'Không thể sao chép');
+            }
+            document.body.removeChild(textArea);
+        });
+
+        // Initialize state
+        showStatus('info', 'Sẵn sàng', 'Vui lòng nhập chuỗi Base64 GZIP vào ô bên trái.');
+
+    </script>
+</body>
+</html>
