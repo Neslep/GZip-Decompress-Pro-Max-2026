@@ -4,12 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GZIP to JSON Decompressor</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Thư viện Pako để xử lý GZIP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap');
         
+        html {
+            font-size: 90%;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -41,10 +46,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            <h1 class="text-xl font-bold text-white">GZIP to JSON Converter</h1>
+            <h1 class="text-xl font-bold text-white">GZIP to JSON Converter Pro Max 2026</h1>
         </div>
         <div class="text-sm text-gray-400 hidden sm:block">
-            Giải nén Base64 GZIP & Format JSON
+            Powered by Nguyễn Gia Anh Tuấn
         </div>
     </header>
 
@@ -125,6 +130,25 @@
         const statusDetail = document.getElementById('statusDetail');
         const statusIcon = document.getElementById('statusIcon');
 
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'text-emerald-400';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'text-sky-400';
+                    } else {
+                        cls = 'text-amber-300';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'text-blue-400';
+                } else if (/null/.test(match)) {
+                    cls = 'text-rose-400';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
         // Hàm xử lý chính
         function processGzip() {
             const rawInput = inputArea.value.trim();
@@ -154,9 +178,9 @@
                     const jsonObject = JSON.parse(decompressedData);
                     const formattedJson = JSON.stringify(jsonObject, null, 4); // Indent 4 spaces
                     
-                    outputArea.textContent = formattedJson;
-                    outputArea.classList.remove('text-red-400', 'text-gray-300');
-                    outputArea.classList.add('text-green-300');
+                    outputArea.innerHTML = syntaxHighlight(formattedJson);
+                    outputArea.classList.remove('text-red-400', 'text-green-300');
+                    outputArea.classList.add('text-gray-300');
                     copyBtn.classList.remove('hidden');
                     showToast('success', 'Giải nén thành công!');
                 } catch (jsonError) {
@@ -233,6 +257,7 @@
         // --- Event Listeners ---
 
         decompressBtn.addEventListener('click', processGzip);
+        inputArea.addEventListener('input', processGzip);
 
         clearBtn.addEventListener('click', () => {
             inputArea.value = '';
