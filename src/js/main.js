@@ -345,3 +345,88 @@ document.addEventListener('mouseup', () => {
         resizer.classList.remove('bg-blue-500');
     }
 });
+
+// --- Theme Management ---
+const THEME_STORAGE_KEY = 'gzip-converter-theme';
+const THEMES = {
+    LIGHT: 'light',
+    DARK: 'dark',
+    SYSTEM: 'system'
+};
+
+const themeToggleBtn = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+
+// Icons for each theme
+const THEME_ICONS = {
+    light: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`,
+    dark: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`,
+    system: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>`
+};
+
+let currentThemePreference = THEMES.SYSTEM;
+
+// Get system theme preference
+function getSystemTheme() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? THEMES.DARK : THEMES.LIGHT;
+}
+
+// Apply theme to document
+function applyTheme(theme) {
+    const actualTheme = theme === THEMES.SYSTEM ? getSystemTheme() : theme;
+
+    if (actualTheme === THEMES.LIGHT) {
+        document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+
+    updateThemeIcon(theme);
+}
+
+// Update theme icon
+function updateThemeIcon(theme) {
+    themeIcon.innerHTML = THEME_ICONS[theme];
+
+    const themeNames = {
+        light: 'Light Mode',
+        dark: 'Dark Mode',
+        system: 'System Theme'
+    };
+    themeToggleBtn.setAttribute('title', themeNames[theme]);
+}
+
+// Get next theme in cycle
+function getNextTheme(current) {
+    const cycle = [THEMES.LIGHT, THEMES.DARK, THEMES.SYSTEM];
+    const currentIndex = cycle.indexOf(current);
+    return cycle[(currentIndex + 1) % cycle.length];
+}
+
+// Toggle theme
+function toggleTheme() {
+    currentThemePreference = getNextTheme(currentThemePreference);
+    localStorage.setItem(THEME_STORAGE_KEY, currentThemePreference);
+    applyTheme(currentThemePreference);
+}
+
+// Initialize theme
+function initTheme() {
+    // Load saved theme or default to system
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    currentThemePreference = savedTheme || THEMES.SYSTEM;
+    applyTheme(currentThemePreference);
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (currentThemePreference === THEMES.SYSTEM) {
+            applyTheme(THEMES.SYSTEM);
+        }
+    });
+}
+
+// Event listener
+themeToggleBtn.addEventListener('click', toggleTheme);
+
+// Initialize theme on load
+initTheme();

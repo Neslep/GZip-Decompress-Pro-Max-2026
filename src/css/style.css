@@ -1,28 +1,70 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap');
 
+/* CSS Variables for Theme */
+:root {
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --bg-tertiary: #374151;
+    --border-color: #4b5563;
+    --text-primary: #f3f4f6;
+    --text-secondary: #d1d5db;
+    --text-muted: #9ca3af;
+    --text-accent: #60a5fa;
+    --scrollbar-track: #1f2937;
+    --scrollbar-thumb: #4b5563;
+    --scrollbar-thumb-hover: #6b7280;
+    --hover-bg: rgba(31, 41, 55, 0.5);
+    --collapsed-bg: #374151;
+    --collapsed-hover: #4b5563;
+}
+
+[data-theme="light"] {
+    --bg-primary: #f9fafb;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #e5e7eb;
+    --border-color: #d1d5db;
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-muted: #6b7280;
+    --text-accent: #2563eb;
+    --scrollbar-track: #f3f4f6;
+    --scrollbar-thumb: #d1d5db;
+    --scrollbar-thumb-hover: #9ca3af;
+    --hover-bg: rgba(243, 244, 246, 0.8);
+    --collapsed-bg: #e5e7eb;
+    --collapsed-hover: #d1d5db;
+}
+
 html {
     font-size: 90%;
 }
 
 body {
     font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 .code-font {
     font-family: 'JetBrains Mono', monospace;
 }
+
+#outputArea {
+    display: inline-block;
+    min-width: 100%;
+}
+
 .line-row {
     display: flex;
     width: 100%;
 }
 .line-row:hover {
-    background-color: rgba(31, 41, 55, 0.5);
+    background-color: var(--hover-bg);
 }
 .line-num {
     width: 3rem;
     flex-shrink: 0;
     text-align: right;
     padding-right: 0.75rem;
-    color: #6b7280;
+    color: var(--text-muted);
     user-select: none;
 }
 .fold-gutter {
@@ -37,11 +79,11 @@ body {
 .fold-icon {
     width: 0.75rem;
     height: 0.75rem;
-    color: #9ca3af;
+    color: var(--text-muted);
     transition: transform 0.15s;
 }
 .fold-icon:hover {
-    color: #e5e7eb;
+    color: var(--text-secondary);
 }
 .fold-icon.collapsed {
     transform: rotate(-90deg);
@@ -55,7 +97,7 @@ body {
     display: inline-block;
     padding: 0 4px;
     margin: 0 4px;
-    background-color: #374151;
+    background-color: var(--collapsed-bg);
     border-radius: 4px;
     color: #fbbf24;
     font-size: 0.75rem;
@@ -63,7 +105,10 @@ body {
     user-select: none;
 }
 .collapsed-indicator:hover {
-    background-color: #4b5563;
+    background-color: var(--collapsed-hover);
+}
+.collapsed-indicator.hidden {
+    display: none;
 }
 /* Custom scrollbar for better look */
 ::-webkit-scrollbar {
@@ -71,12 +116,167 @@ body {
     height: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #1f2937; 
+    background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
-    background: #4b5563; 
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #6b7280; 
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Theme overrides for Tailwind classes */
+[data-theme="light"] body {
+    background-color: #f9fafb !important;
+    color: #111827 !important;
+}
+
+[data-theme="light"] header {
+    background-color: #ffffff !important;
+    border-bottom-color: #e5e7eb !important;
+}
+
+[data-theme="light"] h1 {
+    color: #111827 !important;
+}
+
+[data-theme="light"] .text-gray-400 {
+    color: #6b7280 !important;
+}
+
+[data-theme="light"] .bg-gray-800 {
+    background-color: #f3f4f6 !important;
+}
+
+[data-theme="light"] .bg-gray-900 {
+    background-color: #ffffff !important;
+}
+
+[data-theme="light"] .bg-gray-700 {
+    background-color: #e5e7eb !important;
+}
+
+[data-theme="light"] .border-gray-700 {
+    border-color: #d1d5db !important;
+}
+
+[data-theme="light"] .border-gray-600 {
+    border-color: #d1d5db !important;
+}
+
+[data-theme="light"] .text-gray-300 {
+    color: #374151 !important;
+}
+
+[data-theme="light"] .text-gray-100 {
+    color: #111827 !important;
+}
+
+[data-theme="light"] .text-white {
+    color: #111827 !important;
+}
+
+[data-theme="light"] .hover\:bg-gray-600:hover {
+    background-color: #d1d5db !important;
+}
+
+[data-theme="light"] .hover\:bg-gray-800:hover {
+    background-color: #e5e7eb !important;
+}
+
+[data-theme="light"] .focus\:bg-gray-800:focus {
+    background-color: #f9fafb !important;
+}
+
+[data-theme="light"] #themeToggle {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+}
+
+[data-theme="light"] #themeToggle svg {
+    color: #374151 !important;
+}
+
+[data-theme="light"] #toast {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border-color: #d1d5db !important;
+}
+
+[data-theme="light"] .text-green-300 {
+    color: #059669 !important;
+}
+
+[data-theme="light"] .text-green-400 {
+    color: #10b981 !important;
+}
+
+[data-theme="light"] .text-blue-500 {
+    color: #3b82f6 !important;
+}
+
+/* Syntax highlighting adjustments for light mode */
+[data-theme="light"] .text-emerald-400 {
+    color: #059669 !important;
+}
+
+[data-theme="light"] .text-sky-400 {
+    color: #0284c7 !important;
+}
+
+[data-theme="light"] .text-amber-300 {
+    color: #d97706 !important;
+}
+
+[data-theme="light"] .text-blue-400 {
+    color: #2563eb !important;
+}
+
+[data-theme="light"] .text-rose-400 {
+    color: #e11d48 !important;
+}
+
+/* Button colors for light mode */
+[data-theme="light"] .bg-blue-600 {
+    background-color: #2563eb !important;
+}
+
+[data-theme="light"] .hover\:bg-blue-700:hover {
+    background-color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .bg-green-600 {
+    background-color: #16a34a !important;
+}
+
+[data-theme="light"] .hover\:bg-green-700:hover {
+    background-color: #15803d !important;
+}
+
+/* Status message overlay */
+[data-theme="light"] #statusMessage {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme="light"] .bg-gray-900\/90 {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme="light"] #statusText {
+    color: inherit !important;
+}
+
+[data-theme="light"] #statusDetail {
+    color: #6b7280 !important;
+}
+
+/* Red and blue status colors */
+[data-theme="light"] .text-red-500 {
+    color: #ef4444 !important;
+}
+
+/* Icons in status */
+[data-theme="light"] svg {
+    stroke: currentColor !important;
 }
