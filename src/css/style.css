@@ -376,3 +376,92 @@ body {
 .ripple-dark {
     background: radial-gradient(circle, rgba(17, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0) 70%);
 }
+
+/* Search Bar Styles */
+.search-bar {
+    position: relative;
+    z-index: 30;
+    transform-origin: top;
+    animation: slideDown 0.2s ease-out;
+}
+
+.search-bar.hidden {
+    display: none;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Search Highlight Styles */
+.search-highlight {
+    background-color: rgba(255, 193, 7, 0.4);
+    border-radius: 2px;
+    padding: 0 2px;
+}
+
+.search-highlight-current {
+    background-color: rgba(255, 152, 0, 0.6);
+    border-radius: 2px;
+    padding: 0 2px;
+    box-shadow: 0 0 0 1px rgba(255, 152, 0, 0.8);
+}
+
+[data-theme="light"] .search-highlight {
+    background-color: rgba(255, 193, 7, 0.5);
+}
+
+[data-theme="light"] .search-highlight-current {
+    background-color: rgba(255, 152, 0, 0.7);
+    box-shadow: 0 0 0 1px rgba(255, 152, 0, 1);
+}
+
+/* Light mode search bar styling */
+[data-theme="light"] #searchBar {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+}
+
+[data-theme="light"] #searchInput {
+    background-color: #f9fafb !important;
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+}
+
+[data-theme="light"] #searchInput::placeholder {
+    color: #9ca3af !important;
+}
+
+[data-theme="light"] #searchInput:focus {
+    border-color: #3b82f6 !important;
+}
+
+[data-theme="light"] #searchMatchCount {
+    color: #6b7280 !important;
+}
+
+[data-theme="light"] #searchPrevBtn,
+[data-theme="light"] #searchNextBtn,
+[data-theme="light"] #searchCloseBtn {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    color: #374151 !important;
+}
+
+[data-theme="light"] #searchPrevBtn:hover,
+[data-theme="light"] #searchNextBtn:hover,
+[data-theme="light"] #searchCloseBtn:hover {
+    background-color: #e5e7eb !important;
+}
+
+[data-theme="light"] #searchCaseSensitive {
+    background-color: #f9fafb !important;
+    border-color: #d1d5db !important;
+}
