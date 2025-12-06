@@ -126,6 +126,32 @@ body {
     background: var(--scrollbar-thumb-hover);
 }
 
+/* Syntax highlighting for dark mode (default) */
+.text-emerald-400 {
+    color: #6ee7b7 !important;
+    font-weight: 500;
+}
+
+.text-sky-400 {
+    color: #7dd3fc !important;
+    font-weight: 600;
+}
+
+.text-amber-300 {
+    color: #fcd34d !important;
+    font-weight: 500;
+}
+
+.text-blue-400 {
+    color: #93c5fd !important;
+    font-weight: 600;
+}
+
+.text-rose-400 {
+    color: #fb7185 !important;
+    font-weight: 600;
+}
+
 /* Theme overrides for Tailwind classes */
 [data-theme="light"] body {
     background-color: #f9fafb !important;
@@ -218,23 +244,28 @@ body {
 
 /* Syntax highlighting adjustments for light mode */
 [data-theme="light"] .text-emerald-400 {
-    color: #059669 !important;
+    color: #047857 !important;
+    font-weight: 500;
 }
 
 [data-theme="light"] .text-sky-400 {
-    color: #0284c7 !important;
+    color: #0369a1 !important;
+    font-weight: 600;
 }
 
 [data-theme="light"] .text-amber-300 {
-    color: #d97706 !important;
+    color: #b45309 !important;
+    font-weight: 500;
 }
 
 [data-theme="light"] .text-blue-400 {
-    color: #2563eb !important;
+    color: #1d4ed8 !important;
+    font-weight: 600;
 }
 
 [data-theme="light"] .text-rose-400 {
-    color: #e11d48 !important;
+    color: #be123c !important;
+    font-weight: 600;
 }
 
 /* Button colors for light mode */
