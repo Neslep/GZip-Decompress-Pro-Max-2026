@@ -311,3 +311,68 @@ body {
 [data-theme="light"] svg {
     stroke: currentColor !important;
 }
+
+/* Theme Toggle Buttons */
+#themeToggleGroup > div {
+    background-color: #1f2937;
+}
+
+.theme-btn {
+    color: #9ca3af;
+}
+
+.theme-btn:hover {
+    color: #e5e7eb;
+}
+
+.theme-btn.active {
+    color: #f3f4f6;
+}
+
+[data-theme="light"] .theme-btn {
+    color: #6b7280;
+}
+
+[data-theme="light"] .theme-btn:hover {
+    color: #374151;
+}
+
+[data-theme="light"] .theme-btn.active {
+    color: #111827;
+}
+
+[data-theme="light"] #themeToggleGroup > div {
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+}
+
+[data-theme="light"] #themeIndicator {
+    background-color: #d1d5db !important;
+}
+
+/* Ripple Animation */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.ripple-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: ripple 1s ease-out;
+}
+
+.ripple-light {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.ripple-dark {
+    background: radial-gradient(circle, rgba(17, 24, 39, 0.8) 0%, rgba(17, 24, 39, 0) 70%);
+}

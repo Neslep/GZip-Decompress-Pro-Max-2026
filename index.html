@@ -14,14 +14,14 @@
 <body class="bg-gray-900 text-gray-100 h-screen flex flex-col overflow-hidden">
 
     <!-- Header -->
-    <header class="bg-gray-800 border-b border-gray-700 p-4 shadow-md flex justify-between items-center shrink-0">
-        <div class="flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <header class="bg-gray-800 border-b border-gray-700 p-4 shadow-md flex flex-wrap justify-between items-center shrink-0 gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            <h1 class="text-xl font-bold text-white">GZIP to JSON Converter Pro Max 2026</h1>
+            <h1 class="text-lg sm:text-xl font-bold text-white truncate">GZIP to JSON Converter Pro Max 2026</h1>
         </div>
-        <div class="text-sm text-gray-400 font-bold hidden sm:block">
+        <div class="text-sm text-gray-400 font-bold hidden sm:block whitespace-nowrap">
             Powered by Nguyễn Gia Anh Tuấn
         </div>
     </header>
@@ -31,25 +31,56 @@
         
         <!-- Input Section -->
         <div id="inputSection" class="flex-1 flex flex-col h-1/2 md:h-full min-w-[200px] min-h-[200px]">
-            <div class="p-3 bg-gray-800 flex justify-between items-center border-b border-gray-700">
-                <label class="font-semibold text-gray-300 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="p-3 bg-gray-800 flex items-center border-b border-gray-700 gap-2">
+                <label class="font-semibold text-gray-300 flex items-center gap-2 truncate">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Input (Base64 Gzip String)
+                    <span class="hidden sm:inline">Input (Base64 Gzip String)</span>
+                    <span class="sm:hidden">Input</span>
                 </label>
-                <button id="clearBtn" class="text-xs px-3 py-1 rounded bg-gray-700 hover:bg-gray-600 text-gray-300 transition">
+                <button id="clearBtn" class="ml-auto text-xs px-3 py-1.5 rounded bg-gray-900 border border-gray-600 hover:bg-gray-700 text-gray-300 transition whitespace-nowrap flex-shrink-0">
                     Xóa
                 </button>
             </div>
             <textarea id="inputArea" class="flex-1 bg-gray-900 p-4 code-font text-sm outline-none resize-none focus:bg-gray-800 transition text-gray-300" placeholder="Dán chuỗi GZIP Base64 vào đây... Ví dụ: H4sIAAAAAAAAC..."></textarea>
             
-            <div class="p-4 bg-gray-800 border-t border-gray-700 flex justify-end">
-                <button id="decompressBtn" class="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold py-2 px-6 rounded shadow-lg transition transform active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="p-4 bg-gray-800 border-t border-gray-700 flex flex-wrap justify-between items-center gap-3">
+                <!-- Theme Toggle Group -->
+                <div id="themeToggleGroup" class="flex-shrink-0">
+                    <div class="relative flex items-center gap-1 p-1 bg-gray-900 border border-gray-600 rounded-lg">
+                        <!-- Active Indicator -->
+                        <div id="themeIndicator" class="absolute top-1 bottom-1 bg-gray-700 rounded transition-all duration-300 ease-out"></div>
+
+                        <!-- Light Mode Button -->
+                        <button data-theme="light" class="theme-btn relative z-10 p-2.5 rounded transition-all duration-200" title="Light Mode">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Dark Mode Button -->
+                        <button data-theme="dark" class="theme-btn relative z-10 p-2.5 rounded transition-all duration-200" title="Dark Mode">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                            </svg>
+                        </button>
+
+                        <!-- System Mode Button -->
+                        <button data-theme="system" class="theme-btn relative z-10 p-2.5 rounded transition-all duration-200" title="System Theme">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="decompressBtn" class="flex items-center gap-2 bg-gray-900 border border-gray-600 hover:bg-gray-700 text-gray-300 font-semibold py-2 px-4 sm:px-6 rounded-lg transition transform active:scale-95 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
-                    Giải nén & Format
+                    <span class="hidden sm:inline">Giải nén & Format</span>
+                    <span class="sm:hidden">Giải nén</span>
                 </button>
             </div>
         </div>
@@ -59,15 +90,16 @@
 
         <!-- Output Section -->
         <div id="outputSection" class="flex-1 flex flex-col h-1/2 md:h-full bg-gray-900 relative min-w-[200px] min-h-[200px]">
-            <div class="p-3 bg-gray-800 flex justify-between items-center border-b border-gray-700">
-                <label class="font-semibold text-green-400 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="p-3 bg-gray-800 flex items-center border-b border-gray-700 gap-2">
+                <label class="font-semibold text-green-400 flex items-center gap-2 truncate">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
-                    Output (JSON)
+                    <span class="hidden sm:inline">Output (JSON)</span>
+                    <span class="sm:hidden">Output</span>
                 </label>
-                <button id="copyBtn" class="hidden text-xs px-3 py-1 rounded bg-gray-700 hover:bg-gray-600 text-gray-300 transition flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button id="copyBtn" class="invisible ml-auto text-xs px-3 py-1.5 rounded bg-gray-900 border border-gray-600 hover:bg-gray-700 text-gray-300 transition flex items-center gap-1 whitespace-nowrap flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
                     Sao chép
@@ -90,17 +122,13 @@
     </main>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg transform translate-y-20 opacity-0 transition duration-300 flex items-center gap-2 border border-gray-600">
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded transform translate-y-20 opacity-0 transition duration-300 flex items-center gap-2 border border-gray-600">
         <span id="toastIcon"></span>
         <span id="toastMsg"></span>
     </div>
 
-    <!-- Theme Toggle Button -->
-    <button id="themeToggle" class="fixed bottom-4 left-4 p-3 rounded-lg shadow-lg transition-all duration-300 hover:scale-105 bg-gray-800 border border-gray-600 z-50" title="Chuyển theme">
-        <svg id="themeIcon" class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <!-- Icon sẽ được thay đổi bởi JavaScript -->
-        </svg>
-    </button>
+    <!-- Ripple Effect Container -->
+    <div id="themeRipple" class="fixed inset-0 pointer-events-none z-40 overflow-hidden"></div>
 
     <script src="src/js/main.js"></script>
 </body>

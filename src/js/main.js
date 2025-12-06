@@ -171,7 +171,7 @@ function processGzip() {
     // Reset UI
     hideStatus();
     outputArea.innerHTML = '';
-    copyBtn.classList.add('hidden');
+    copyBtn.classList.add('invisible');
 
     if (!rawInput) {
         showStatus('info', 'Chờ dữ liệu', 'Vui lòng nhập chuỗi Base64 GZIP vào ô bên trái.');
@@ -193,14 +193,14 @@ function processGzip() {
             const formattedJson = JSON.stringify(jsonObject, null, 4);
             
             renderJson(formattedJson);
-            
-            copyBtn.classList.remove('hidden');
+
+            copyBtn.classList.remove('invisible');
             showToast('success', 'Giải nén thành công!');
         } catch (jsonError) {
             // Nếu không phải JSON, hiển thị text thuần
             outputArea.textContent = decompressedData;
             outputArea.className = 'code-font text-sm text-gray-300 whitespace-pre p-4';
-            copyBtn.classList.remove('hidden');
+            copyBtn.classList.remove('invisible');
             showToast('warning', 'Đã giải nén (Không phải JSON)');
         }
 
@@ -274,7 +274,7 @@ inputArea.addEventListener('input', processGzip);
 clearBtn.addEventListener('click', () => {
     inputArea.value = '';
     outputArea.innerHTML = '';
-    copyBtn.classList.add('hidden');
+    copyBtn.classList.add('invisible');
     inputArea.focus();
     showStatus('info', 'Sẵn sàng', 'Vui lòng nhập chuỗi Base64 GZIP vào ô bên trái.');
 });
@@ -354,15 +354,9 @@ const THEMES = {
     SYSTEM: 'system'
 };
 
-const themeToggleBtn = document.getElementById('themeToggle');
-const themeIcon = document.getElementById('themeIcon');
-
-// Icons for each theme
-const THEME_ICONS = {
-    light: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`,
-    dark: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>`,
-    system: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>`
-};
+const themeButtons = document.querySelectorAll('.theme-btn');
+const themeIndicator = document.getElementById('themeIndicator');
+const themeRipple = document.getElementById('themeRipple');
 
 let currentThemePreference = THEMES.SYSTEM;
 
@@ -371,8 +365,56 @@ function getSystemTheme() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? THEMES.DARK : THEMES.LIGHT;
 }
 
+// Create ripple effect
+function createRipple(event) {
+    const rect = event.target.closest('.theme-btn').getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple-circle';
+    ripple.style.width = ripple.style.height = '100vh';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+
+    // Determine ripple color based on target theme
+    const targetTheme = event.target.closest('.theme-btn').dataset.theme;
+    const actualTargetTheme = targetTheme === THEMES.SYSTEM ? getSystemTheme() : targetTheme;
+    ripple.classList.add(actualTargetTheme === THEMES.LIGHT ? 'ripple-light' : 'ripple-dark');
+
+    themeRipple.appendChild(ripple);
+
+    // Remove ripple after animation
+    setTimeout(() => {
+        ripple.remove();
+    }, 1000);
+}
+
+// Update indicator position
+function updateIndicator(theme) {
+    const activeButton = document.querySelector(`.theme-btn[data-theme="${theme}"]`);
+    if (activeButton) {
+        const rect = activeButton.getBoundingClientRect();
+        const parentRect = activeButton.parentElement.getBoundingClientRect();
+        const left = rect.left - parentRect.left;
+
+        themeIndicator.style.left = left + 'px';
+        themeIndicator.style.width = rect.width + 'px';
+    }
+
+    // Update active states
+    themeButtons.forEach(btn => {
+        if (btn.dataset.theme === theme) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
 // Apply theme to document
-function applyTheme(theme) {
+function applyTheme(theme, withRipple = false, event = null) {
     const actualTheme = theme === THEMES.SYSTEM ? getSystemTheme() : theme;
 
     if (actualTheme === THEMES.LIGHT) {
@@ -381,33 +423,18 @@ function applyTheme(theme) {
         document.documentElement.removeAttribute('data-theme');
     }
 
-    updateThemeIcon(theme);
+    updateIndicator(theme);
+
+    if (withRipple && event) {
+        createRipple(event);
+    }
 }
 
-// Update theme icon
-function updateThemeIcon(theme) {
-    themeIcon.innerHTML = THEME_ICONS[theme];
-
-    const themeNames = {
-        light: 'Light Mode',
-        dark: 'Dark Mode',
-        system: 'System Theme'
-    };
-    themeToggleBtn.setAttribute('title', themeNames[theme]);
-}
-
-// Get next theme in cycle
-function getNextTheme(current) {
-    const cycle = [THEMES.LIGHT, THEMES.DARK, THEMES.SYSTEM];
-    const currentIndex = cycle.indexOf(current);
-    return cycle[(currentIndex + 1) % cycle.length];
-}
-
-// Toggle theme
-function toggleTheme() {
-    currentThemePreference = getNextTheme(currentThemePreference);
+// Set theme
+function setTheme(theme, event) {
+    currentThemePreference = theme;
     localStorage.setItem(THEME_STORAGE_KEY, currentThemePreference);
-    applyTheme(currentThemePreference);
+    applyTheme(currentThemePreference, true, event);
 }
 
 // Initialize theme
@@ -425,8 +452,13 @@ function initTheme() {
     });
 }
 
-// Event listener
-themeToggleBtn.addEventListener('click', toggleTheme);
+// Event listeners for theme buttons
+themeButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const theme = btn.dataset.theme;
+        setTheme(theme, e);
+    });
+});
 
 // Initialize theme on load
 initTheme();
